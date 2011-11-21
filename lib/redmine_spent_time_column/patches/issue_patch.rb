@@ -3,7 +3,7 @@ module RedmineSpentTimeColumn
     module IssuePatch
       
       def remaining_hours
-        @remaining_hours ||= self_and_descendants.sum("estimated_hours").to_f || 0.0 - spent_hours
+        @remaining_hours ||= self_and_descendants.sum("estimated_hours").to_f - spent_hours
       end
       
     end
