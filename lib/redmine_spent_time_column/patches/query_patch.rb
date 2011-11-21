@@ -11,19 +11,9 @@ module RedmineSpentTimeColumn
               :sortable => "(select sum(hours) from #{TimeEntry.table_name} where #{TimeEntry.table_name}.issue_id = #{Issue.table_name}.id)"
             ) unless columns.detect{ |c| c.name == :spent_hours }
 
-            columns << QueryColumn.new(:calculated_spent_hours,
-              :caption => :label_calculated_spent_hours,
-              :sortable => "(IF(#{Issue.table_name}.estimated_hours IS NULL,0,#{Issue.table_name}.estimated_hours) * #{Issue.table_name}.done_ratio / 100)"
-            ) unless columns.detect{ |c| c.name == :calculated_spent_hours }
-
-            columns << QueryColumn.new(:divergent_hours,
-              :caption => :label_divergent_hours,
-              :sortable => "((select sum(hours) from #{TimeEntry.table_name} where #{TimeEntry.table_name}.issue_id = #{Issue.table_name}.id) - (IF(#{Issue.table_name}.estimated_hours IS NULL,0,#{Issue.table_name}.estimated_hours) * #{Issue.table_name}.done_ratio / 100))"
-            ) unless columns.detect{ |c| c.name == :divergent_hours }
-
             columns << QueryColumn.new(:remaining_hours,
               :caption => :label_remaining_hours,
-              :sortable => "(IF(#{Issue.table_name}.estimated_hours IS NULL,0,#{Issue.table_name}.estimated_hours) - (IF(#{Issue.table_name}.estimated_hours IS NULL,0,#{Issue.table_name}.estimated_hours) * #{Issue.table_name}.done_ratio / 100))"
+              :sortable => "(IF(#{Issue.table_name}.estimated_hours IS NULL,0,#{Issue.table_name}.estimated_hours) - (select sum(hours) from #{TimeEntry.table_name} where #{TimeEntry.table_name}.issue_id = #{Issue.table_name}.id))"
             ) unless columns.detect{ |c| c.name == :remaining_hours }
 
           end
